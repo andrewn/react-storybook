@@ -1,8 +1,11 @@
+/** @jsx dom */
 import 'airbnb-js-shims';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import ErrorDisplay from './error_display';
-
+import dom from 'virtual-element';
+import {render, tree} from 'deku';
+// import React from 'react';
+// import ReactDOM from 'react-dom';
+// import ErrorDisplay from './error_display';
+//
 const rootEl = document.getElementById('root');
 let previousKind = '';
 let previousStory = '';
@@ -12,10 +15,11 @@ export function renderError(error) {
   // Since this is an error, this affects to the main page as well.
   const realError = new Error(error.message);
   realError.stack = error.stack;
-  const redBox = (<ErrorDisplay error={realError} />);
-  ReactDOM.render(redBox, rootEl);
-}
+  const redBox = (<div style="color: white; background: red; padding: 1rem; margin: 0; position: absolute; top: 0; right: 0; bottom: 0; left: 0;"><pre>{ error.stack }</pre></div>);
 
+  return render(tree(redBox), rootEl);
+}
+//
 export function renderMain(data, storyStore) {
   if (storyStore.size() === 0) return null;
 
@@ -25,8 +29,10 @@ export function renderMain(data, storyStore) {
 
   const story = storyStore.getStory(selectedKind, selectedStory);
   if (!story) {
-    return ReactDOM.render(noPreview, rootEl);
+    return render(tree(noPreview), rootEl);
+    // return ReactDOM.render(noPreview, rootEl);
   }
+
 
   // Unmount the previous story only if selectedKind or selectedStory has changed.
   // renderMain() gets executed after each action. Actions will cause the whole
@@ -39,7 +45,8 @@ export function renderMain(data, storyStore) {
     //    https://github.com/kadirahq/react-storybook/issues/81
     previousKind = selectedKind;
     previousStory = selectedStory;
-    ReactDOM.unmountComponentAtNode(rootEl);
+    // ReactDOM.unmountComponentAtNode(rootEl);
+    console.warn('Should unmount component');
   }
 
   const context = {
@@ -48,7 +55,8 @@ export function renderMain(data, storyStore) {
   };
 
   try {
-    return ReactDOM.render(story(context), rootEl);
+    return render(tree(story(context)), rootEl);
+    // return ReactDOM.render(story(context), rootEl);
   } catch (ex) {
     return renderError(ex);
   }
@@ -56,6 +64,7 @@ export function renderMain(data, storyStore) {
 
 export default function renderPreview({ reduxStore, storyStore }) {
   const state = reduxStore.getState();
+
   if (state.error) {
     return renderError(state.error);
   }

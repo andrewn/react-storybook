@@ -9,21 +9,20 @@ exports.default = renderPreview;
 
 require('airbnb-js-shims');
 
-var _react = require('react');
+var _virtualElement = require('virtual-element');
 
-var _react2 = _interopRequireDefault(_react);
+var _virtualElement2 = _interopRequireDefault(_virtualElement);
 
-var _reactDom = require('react-dom');
-
-var _reactDom2 = _interopRequireDefault(_reactDom);
-
-var _error_display = require('./error_display');
-
-var _error_display2 = _interopRequireDefault(_error_display);
+var _deku = require('deku');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var rootEl = document.getElementById('root');
+// import React from 'react';
+// import ReactDOM from 'react-dom';
+// import ErrorDisplay from './error_display';
+//
+var rootEl = document.getElementById('root'); /** @jsx dom */
+
 var previousKind = '';
 var previousStory = '';
 
@@ -32,35 +31,38 @@ function renderError(error) {
   // Since this is an error, this affects to the main page as well.
   var realError = new Error(error.message);
   realError.stack = error.stack;
-  var redBox = _react2.default.createElement(_error_display2.default, { error: realError, __self: this
-  });
-  _reactDom2.default.render(redBox, rootEl);
+  var redBox = (0, _virtualElement2.default)(
+    'div',
+    { style: 'color: white; background: red; padding: 1rem; margin: 0; position: absolute; top: 0; right: 0; bottom: 0; left: 0;' },
+    (0, _virtualElement2.default)(
+      'pre',
+      null,
+      error.stack
+    )
+  );
+
+  return (0, _deku.render)((0, _deku.tree)(redBox), rootEl);
 }
-
+//
 function renderMain(data, storyStore) {
-  var _this = this;
-
   if (storyStore.size() === 0) return null;
 
   var NoPreview = function NoPreview() {
-    return _react2.default.createElement(
+    return (0, _virtualElement2.default)(
       'p',
-      {
-        __self: _this
-      },
+      null,
       'No Preview Available!'
     );
   };
-  var noPreview = _react2.default.createElement(NoPreview, {
-    __self: this
-  });
+  var noPreview = (0, _virtualElement2.default)(NoPreview, null);
   var selectedKind = data.selectedKind;
   var selectedStory = data.selectedStory;
 
 
   var story = storyStore.getStory(selectedKind, selectedStory);
   if (!story) {
-    return _reactDom2.default.render(noPreview, rootEl);
+    return (0, _deku.render)((0, _deku.tree)(noPreview), rootEl);
+    // return ReactDOM.render(noPreview, rootEl);
   }
 
   // Unmount the previous story only if selectedKind or selectedStory has changed.
@@ -74,7 +76,8 @@ function renderMain(data, storyStore) {
     //    https://github.com/kadirahq/react-storybook/issues/81
     previousKind = selectedKind;
     previousStory = selectedStory;
-    _reactDom2.default.unmountComponentAtNode(rootEl);
+    // ReactDOM.unmountComponentAtNode(rootEl);
+    console.warn('Should unmount component');
   }
 
   var context = {
@@ -83,7 +86,8 @@ function renderMain(data, storyStore) {
   };
 
   try {
-    return _reactDom2.default.render(story(context), rootEl);
+    return (0, _deku.render)((0, _deku.tree)(story(context)), rootEl);
+    // return ReactDOM.render(story(context), rootEl);
   } catch (ex) {
     return renderError(ex);
   }
@@ -94,6 +98,7 @@ function renderPreview(_ref) {
   var storyStore = _ref.storyStore;
 
   var state = reduxStore.getState();
+
   if (state.error) {
     return renderError(state.error);
   }
