@@ -14,6 +14,8 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _actions = require('./actions');
 
+var _ = require('./');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ConfigApi = function () {
@@ -23,6 +25,8 @@ var ConfigApi = function () {
     var reduxStore = _ref.reduxStore;
     (0, _classCallCheck3.default)(this, ConfigApi);
 
+    // pageBus can be null when running in node
+    // always check whether pageBus is available
     this._pageBus = pageBus;
     this._storyStore = storyStore;
     this._reduxStore = reduxStore;
@@ -67,9 +71,16 @@ var ConfigApi = function () {
         module.hot.accept(function () {
           setTimeout(render);
         });
+        module.hot.dispose(function () {
+          (0, _.clearDecorators)();
+        });
       }
 
-      render();
+      if (this._pageBus) {
+        render();
+      } else {
+        loaders();
+      }
     }
   }]);
   return ConfigApi;

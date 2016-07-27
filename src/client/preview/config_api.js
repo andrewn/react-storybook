@@ -4,8 +4,12 @@ import {
   clearError,
 } from './actions';
 
+import { clearDecorators } from './';
+
 export default class ConfigApi {
   constructor({ pageBus, storyStore, reduxStore }) {
+    // pageBus can be null when running in node
+    // always check whether pageBus is available
     this._pageBus = pageBus;
     this._storyStore = storyStore;
     this._reduxStore = reduxStore;
@@ -42,8 +46,15 @@ export default class ConfigApi {
       module.hot.accept(() => {
         setTimeout(render);
       });
+      module.hot.dispose(() => {
+        clearDecorators();
+      });
     }
 
-    render();
+    if (this._pageBus) {
+      render();
+    } else {
+      loaders();
+    }
   }
 }

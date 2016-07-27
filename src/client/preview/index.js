@@ -10,18 +10,23 @@ import init from './init';
 import { createStore } from 'redux';
 import reducer from './reducer';
 
-const queryParams = qs.parse(window.location.search.substring(1));
+// check whether we're running on node/browser
+const isBrowser = typeof window !== 'undefined';
 
 const storyStore = new StoryStore();
 const reduxStore = createStore(reducer);
-const pageBus = new PageBus(queryParams.dataId, reduxStore);
-pageBus.init();
+const context = { storyStore, reduxStore };
 
-const context = { storyStore, reduxStore, pageBus, window, queryParams };
+if (isBrowser) {
+  const queryParams = qs.parse(window.location.search.substring(1));
+  const pageBus = new PageBus(queryParams.dataId, reduxStore);
+  Object.assign(context, { pageBus, window, queryParams });
+  pageBus.init();
+  init(context);
+}
+
 const clientApi = new ClientApi(context);
 const configApi = new ConfigApi(context);
-
-init(context);
 
 // do exports
 export const storiesOf = clientApi.storiesOf.bind(clientApi);
@@ -29,11 +34,15 @@ export const action = clientApi.action.bind(clientApi);
 export const linkTo = clientApi.linkTo.bind(clientApi);
 export const setAddon = clientApi.setAddon.bind(clientApi);
 export const addDecorator = clientApi.addDecorator.bind(clientApi);
+export const clearDecorators = clientApi.clearDecorators.bind(clientApi);
+export const getStorybook = clientApi.getStorybook.bind(clientApi);
 export const configure = configApi.configure.bind(configApi);
 
 // initialize the UI
 const renderUI = () => {
-  render(context);
+  if (isBrowser) {
+    render(context);
+  }
 };
 
 reduxStore.subscribe(renderUI);

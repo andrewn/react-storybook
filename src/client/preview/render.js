@@ -1,21 +1,32 @@
 /** @jsx dom */
 import 'airbnb-js-shims';
 import dom from 'virtual-element';
-import {render, tree} from 'deku';
+import { render, tree } from 'deku';
 // import React from 'react';
 // import ReactDOM from 'react-dom';
 // import ErrorDisplay from './error_display';
-//
-const rootEl = document.getElementById('root');
+
+// check whether we're running on node/browser
+const isBrowser = typeof window !== 'undefined';
+
+let rootEl = null;
 let previousKind = '';
 let previousStory = '';
+
+if (isBrowser) {
+  rootEl = document.getElementById('root');
+}
 
 export function renderError(error) {
   // We always need to render redbox in the mainPage if we get an error.
   // Since this is an error, this affects to the main page as well.
   const realError = new Error(error.message);
   realError.stack = error.stack;
-  const redBox = (<div style="color: white; background: red; padding: 1rem; margin: 0; position: absolute; top: 0; right: 0; bottom: 0; left: 0;"><pre>{ error.stack }</pre></div>);
+  const styles = `
+  color: white; background: red; padding: 1rem; margin: 0;
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+  `;
+  const redBox = (<div style={styles}><pre>{ error.stack }</pre></div>);
 
   return render(tree(redBox), rootEl);
 }
@@ -46,7 +57,7 @@ export function renderMain(data, storyStore) {
     previousKind = selectedKind;
     previousStory = selectedStory;
     // ReactDOM.unmountComponentAtNode(rootEl);
-    console.warn('Should unmount component');
+    // console.warn('Should unmount component');
   }
 
   const context = {

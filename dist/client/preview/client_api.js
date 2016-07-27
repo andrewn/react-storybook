@@ -36,6 +36,8 @@ var ClientApi = function () {
     var storyStore = _ref.storyStore;
     (0, _classCallCheck3.default)(this, ClientApi);
 
+    // pageBus can be null when running in node
+    // always check whether pageBus is available
     this._pageBus = pageBus;
     this._storyStore = storyStore;
     this._addons = {};
@@ -51,6 +53,11 @@ var ClientApi = function () {
     key: 'addDecorator',
     value: function addDecorator(decorator) {
       this._globalDecorators.push(decorator);
+    }
+  }, {
+    key: 'clearDecorators',
+    value: function clearDecorators() {
+      this._globalDecorators = [];
     }
   }, {
     key: 'storiesOf',
@@ -116,7 +123,7 @@ var ClientApi = function () {
     value: function action(name) {
       var pageBus = this._pageBus;
 
-      return function () {
+      return function action() {
         for (var _len2 = arguments.length, _args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
           _args[_key2] = arguments[_key2];
         }
@@ -133,9 +140,10 @@ var ClientApi = function () {
 
         var id = _uuid2.default.v4();
         var data = { name: name, args: args };
-        var action = { data: data, id: id };
 
-        pageBus.emit('addAction', { action: action });
+        if (pageBus) {
+          pageBus.emit('addAction', { action: { data: data, id: id } });
+        }
       };
     }
   }, {
@@ -143,12 +151,28 @@ var ClientApi = function () {
     value: function linkTo(kind, story) {
       var pageBus = this._pageBus;
 
-      return function () {
+      return function linkTo() {
         var resolvedKind = typeof kind === 'function' ? kind.apply(undefined, arguments) : kind;
         var resolvedStory = typeof story === 'function' ? story.apply(undefined, arguments) : story;
+        var selection = { kind: resolvedKind, story: resolvedStory };
 
-        pageBus.emit('selectStory', { kind: resolvedKind, story: resolvedStory });
+        if (pageBus) {
+          pageBus.emit('selectStory', selection);
+        }
       };
+    }
+  }, {
+    key: 'getStorybook',
+    value: function getStorybook() {
+      var _this2 = this;
+
+      return this._storyStore.getStoryKinds().map(function (kind) {
+        var stories = _this2._storyStore.getStories(kind).map(function (name) {
+          var render = _this2._storyStore.getStory(kind, name);
+          return { name: name, render: render };
+        });
+        return { kind: kind, stories: stories };
+      });
     }
   }]);
   return ClientApi;

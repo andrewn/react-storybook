@@ -20,20 +20,28 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // import React from 'react';
 // import ReactDOM from 'react-dom';
 // import ErrorDisplay from './error_display';
-//
-var rootEl = document.getElementById('root'); /** @jsx dom */
 
+// check whether we're running on node/browser
+var isBrowser = typeof window !== 'undefined'; /** @jsx dom */
+
+
+var rootEl = null;
 var previousKind = '';
 var previousStory = '';
+
+if (isBrowser) {
+  rootEl = document.getElementById('root');
+}
 
 function renderError(error) {
   // We always need to render redbox in the mainPage if we get an error.
   // Since this is an error, this affects to the main page as well.
   var realError = new Error(error.message);
   realError.stack = error.stack;
+  var styles = '\n  color: white; background: red; padding: 1rem; margin: 0;\n  position: absolute; top: 0; right: 0; bottom: 0; left: 0;\n  ';
   var redBox = (0, _virtualElement2.default)(
     'div',
-    { style: 'color: white; background: red; padding: 1rem; margin: 0; position: absolute; top: 0; right: 0; bottom: 0; left: 0;' },
+    { style: styles },
     (0, _virtualElement2.default)(
       'pre',
       null,
@@ -77,7 +85,7 @@ function renderMain(data, storyStore) {
     previousKind = selectedKind;
     previousStory = selectedStory;
     // ReactDOM.unmountComponentAtNode(rootEl);
-    console.warn('Should unmount component');
+    // console.warn('Should unmount component');
   }
 
   var context = {

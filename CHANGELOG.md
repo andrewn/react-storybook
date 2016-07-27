@@ -1,5 +1,43 @@
 ## Changelog
 
+### v1.41.0
+
+* Fix nodejs require errors [#337](https://github.com/kadirahq/react-storybook/pull/337).
+* Add getStorybook method to client API [#332](https://github.com/kadirahq/react-storybook/pull/332).
+
+### v1.40.0
+
+* Fix duplicate decorator bug [#335](https://github.com/kadirahq/react-storybook/pull/335).
+
+### v1.39.1
+
+* Update babel packages [#325](https://github.com/kadirahq/react-storybook/pull/325).
+* Hide HMR info logs [#331](https://github.com/kadirahq/react-storybook/pull/331).
+
+### v1.39.0
+
+* Update @kadira/storybook-ui to get featues from [v2.5.0](https://github.com/kadirahq/storybook-ui/blob/master/CHANGELOG.md#v250) and [v2.6.0](https://github.com/kadirahq/storybook-ui/blob/master/CHANGELOG.md#v260).
+
+### v1.38.3
+
+* Add names for action and linkTo functions [#321](https://github.com/kadirahq/react-storybook/pull/321).
+
+### v1.38.2
+
+* Fix error in prepublish script [#319](https://github.com/kadirahq/react-storybook/pull/319).
+
+### v1.38.1
+
+* Improve Windows support by writing prepublish script using shelljs [#308](https://github.com/kadirahq/react-storybook/pull/308).
+
+### v1.38.0
+
+* v1.37.0 was a nightmare since it contains the npm-shrinkwrap.json. Fixed by removing it. See: [#306](https://github.com/kadirahq/react-storybook/issues/306) and [#305](https://github.com/kadirahq/react-storybook/pull/305).
+
+### v1.37.0
+
+* Update @kadira/storybook-ui to 2.4.0
+
 ### v1.36.0
 
 * Support watchOptions configuration. See: [PR287](https://github.com/kadirahq/react-storybook/pull/287)
