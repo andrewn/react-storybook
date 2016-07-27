@@ -9,9 +9,9 @@ exports.default = renderPreview;
 
 require('airbnb-js-shims');
 
-var _virtualElement = require('virtual-element');
+var _magicVirtualElement = require('magic-virtual-element');
 
-var _virtualElement2 = _interopRequireDefault(_virtualElement);
+var _magicVirtualElement2 = _interopRequireDefault(_magicVirtualElement);
 
 var _deku = require('deku');
 
@@ -39,10 +39,10 @@ function renderError(error) {
   var realError = new Error(error.message);
   realError.stack = error.stack;
   var styles = '\n  color: white; background: red; padding: 1rem; margin: 0;\n  position: absolute; top: 0; right: 0; bottom: 0; left: 0;\n  ';
-  var redBox = (0, _virtualElement2.default)(
+  var redBox = (0, _magicVirtualElement2.default)(
     'div',
     { style: styles },
-    (0, _virtualElement2.default)(
+    (0, _magicVirtualElement2.default)(
       'pre',
       null,
       error.stack
@@ -56,13 +56,13 @@ function renderMain(data, storyStore) {
   if (storyStore.size() === 0) return null;
 
   var NoPreview = function NoPreview() {
-    return (0, _virtualElement2.default)(
+    return (0, _magicVirtualElement2.default)(
       'p',
       null,
       'No Preview Available!'
     );
   };
-  var noPreview = (0, _virtualElement2.default)(NoPreview, null);
+  var noPreview = (0, _magicVirtualElement2.default)(NoPreview, null);
   var selectedKind = data.selectedKind;
   var selectedStory = data.selectedStory;
 

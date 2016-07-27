@@ -1,6 +1,6 @@
 /** @jsx dom */
 import 'airbnb-js-shims';
-import dom from 'virtual-element';
+import dom from 'magic-virtual-element';
 import { render, tree } from 'deku';
 // import React from 'react';
 // import ReactDOM from 'react-dom';
